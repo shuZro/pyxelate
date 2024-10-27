@@ -233,15 +233,17 @@ class Pyx(BaseEstimator, TransformerMixin):
         """Fit palette and optionally calculate automatic dithering"""
         h, w, d = X.shape
         # create a smaller image for BGM without alpha channel
-        if d > 3:
-            # separate color and alpha channels
-            X_ = self._dilate(X).reshape(-1, 4)
-            alpha_mask = X_[:, 3]
-            X_ = X_[alpha_mask >= self.alpha]
-            X_ = X_.reshape(1, -1, 4)
-            X_ = resize(X[:, :, :3], (1, min(h, self.BGM_RESIZE) * min(w, self.BGM_RESIZE)), anti_aliasing=False)
-        else:
-            X_ = resize(X[:, :, :3], (min(h, self.BGM_RESIZE), min(w, self.BGM_RESIZE)), anti_aliasing=False)
+        # if d > 3:
+        #     # separate color and alpha channels
+        #     X_ = self._dilate(X).reshape(-1, 4)
+        #     alpha_mask = X_[:, 3]
+        #     X_ = X_[alpha_mask >= self.alpha]
+        #     X_ = X_.reshape(1, -1, 4)
+        #     X_ = resize(X[:, :, :3], (1, min(h, self.BGM_RESIZE) * min(w, self.BGM_RESIZE)), anti_aliasing=False)
+        # else:
+        #     X_ = resize(X[:, :, :3], (min(h, self.BGM_RESIZE), min(w, self.BGM_RESIZE)), anti_aliasing=False)
+
+        X_ = resize(X[:, :, :3], (min(h, self.BGM_RESIZE), min(w, self.BGM_RESIZE)), anti_aliasing=False)
         X_ = self._image_to_float(X_).reshape(-1, 3)  # make sure colors have a float representation
         if self.find_palette:
             X_ = ((X_ - .5) * self.SCALE_RGB) + .5  # move values away from grayish colors 
